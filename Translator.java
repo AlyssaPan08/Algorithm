@@ -2,22 +2,31 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Translator {
-    private static Map<String, Map<String, String>> dict;//root word, <lang, word>
-    private static Map<String, String> roots; //word, root word
+    private static final Map<String, Map<String, String>> dict = new HashMap<>();//root word, <lang, word>
+    private static final Map<String, String> roots = new HashMap<>(); //word, root word
+    private static final Map<String, Integer> rank = new HashMap<>(); //optimize union by rank
     
-    public Translator() {
-        dict = new HashMap<>();
-        roots = new HashMap<>();
-    }
+    public Translator() {}
+    
     public static void add(String inputLang, String inputWord, String outputLang, String outputWord) {
-        init(inputLang, inputWord); //initialize each word for union find
-        init(outputLang, outputWord);
-        String root1 = find(inputWord);
-        String root2 = find(outputWord);
+        //put word1 and word2 to roots, dict and rank
+        init(lang1, word1);
+        init(lang2, word2);
+        //get the root of word1 and word2
+        String root1 = find(word1);
+        String root2 = find(word2);
+        //if root1 != root2 => union
         if (!root1.equals(root2)) {
-            roots.put(root2, root1); //union
-            dict.get(root1).putAll(dict.get(root2));
-            dict.remove(root2);
+            int rank1 = rank.get(root1);
+            int rank2 = rank.get(root2);
+            if (rank1 > rank2) {
+                union(root2, root1);
+            } else if (rank1 < rank2) {
+                union(root1, root2);
+            } else {
+                union(root1, root2);
+                rank.put(root2, rank2 + 1);
+            }
         }
     }
     public static String get(String inputLang, String inputWord, String outputLang) {
@@ -41,6 +50,13 @@ public class Translator {
         if (!word.equals(root)) roots.put(word, find(root));
         return roots.get(word);
     }
+    private static void union(String child, String root) {
+        roots.put(child, root);
+        dict.get(root).putAll(dict.get(child));
+        dict.remove(child);
+        rank.remove(child);
+    }
+    
     public Map<String, String> getRoots() {
         return roots;
     }
