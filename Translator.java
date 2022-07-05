@@ -41,6 +41,7 @@ public class Translator {
             Map<String, String> entry = new HashMap<>();
             entry.put(lang, word);
             dict.put(word, entry);
+            rank.put(word, 1);
         }
     }
     private static String find(String word) {
