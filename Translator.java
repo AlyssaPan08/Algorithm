@@ -1,6 +1,8 @@
 import java.util.Map;
 import java.util.HashMap;
 
+## google 2022 fall intern phone interview
+## 设计一个翻译系统，包括add和get两个方法，只允许间接跳转一次
 public class Translator {
     private static final Map<String, Map<String, String>> dict = new HashMap<>();//root word, <lang, word>
     private static final Map<String, String> roots = new HashMap<>(); //word, root word
